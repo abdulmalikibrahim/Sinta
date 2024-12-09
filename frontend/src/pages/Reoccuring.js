@@ -107,11 +107,11 @@ const ListJob = ({tasks,fetchTasks}) => {
                                             diffDays > 0 ? <span style={{fontSize:"8pt"}} className='badge bg-danger'>Over {diffDays} days</span> : <span style={{fontSize:"8pt"}} className='badge bg-success'>Ontime</span>
                                         }
                                     </div>
-                                    <div className='col-8'><b>[{task.code}]</b> {task.job}</div>
+                                    <div className='col-8'><span style={{fontSize:"10pt"}}><b>[{task.code}]</b> {task.job}</span></div>
                                     <div className='col text-end d-flex justify-content-end align-items-center' style={{fontSize:"6pt"}}>{task.date_finish ? convertDate(task.date_finish) : ""}</div>
                                 </div>
-                                <div className='row' style={{fontSize:"9pt"}}>
-                                    <div className='col'>{task.nama}</div>
+                                <div className='row mt-2' style={{fontSize:"9pt"}}>
+                                    <div className='col' style={{fontSize:"8pt"}}>{task.nama}</div>
                                     <div className='col text-end' style={{fontSize:"8pt"}}>{task.groupname}</div>
                                 </div>
                             </div>
