@@ -1,0 +1,32 @@
+/* Gaya untuk div scrollRoomCard */
+.scrollRoomCard {
+    width: 100%;
+    overflow-x: hidden; /* Default: sembunyikan scrollbar */
+    color: #f1f1f1;
+    position: relative;
+}
+
+/* Tampilkan scrollbar saat mouse berada di area div */
+.scrollRoomCard:hover {
+    overflow: auto; /* Tampilkan scrollbar vertikal */
+}
+
+/* Custom scrollbar styling */
+.scrollRoomCard::-webkit-scrollbar {
+    height: 10px;
+    width: 10px;
+}
+
+.scrollRoomCard::-webkit-scrollbar-track {
+    background: #f1f1f1; /* Warna track */
+    border-radius: 10px; /* Bikin track terlihat lebih halus */
+}
+
+.scrollRoomCard::-webkit-scrollbar-thumb {
+    background: #888; /* Warna scrollbar */
+    border-radius: 10px; /* Bikin scrollbar halus */
+}
+
+.scrollRoomCard::-webkit-scrollbar-thumb:hover {
+    background: #555; /* Warna scrollbar saat di-hover */
+}
