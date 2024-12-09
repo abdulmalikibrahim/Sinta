@@ -1,3 +1,7 @@
+SINTA is Sistem Integrasi Agenda
+
+This apps can use for monitoring job your project team & reoccuring job. This is a simple apps maybe will be another revision apps for next time
+
 This is an my application project using React JS for FrontEnd and using nodeJs for BackEnd.
 You can try this using npm i on the base folder, frontend folder, and backend folder.
 
