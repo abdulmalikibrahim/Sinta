@@ -54,7 +54,8 @@ const Reoccuring = () => {
 
     return (
         <>
-            <CardTask 
+            {
+                session && <CardTask 
                 card={card} 
                 session={session} 
                 tasks={tasks} 
@@ -64,6 +65,7 @@ const Reoccuring = () => {
                 setTasksUpdate={setTasksUpdate}
             />
                 
+            }
             {modal && <ModalInput modal={modal} modalHide={modalHide} tasksUpdate={tasksUpdate} session={session} jobType={jobType} />}
         </>
     )
@@ -73,7 +75,7 @@ const CardTask = ({...props}) => {
     return (
         <>
             <ButtonBack page={"reoccuring"} />
-            <div className='row'>
+            <div className='row pe-2 ps-2'>
                 {props.card.map((e,index) => (
                     <div key={index} className='col'>
                         <div className='card border-0'>

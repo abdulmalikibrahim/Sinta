@@ -5,7 +5,6 @@ import Swal from 'sweetalert2'
 import GroupList from '../../component/GroupList';
 
 const ModalInput = ({ show, handleClose, modalData, showData }) => {
-  console.log(modalData);
   const [method, setMethod] = useState(modalData.method);
   const [idItem, setidItem] = useState(modalData.idItem);
   const [job, setJob] = useState(modalData.job); // State untuk textarea (Job)

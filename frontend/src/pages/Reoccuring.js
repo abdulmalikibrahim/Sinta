@@ -47,13 +47,13 @@ const Reoccuring = () => {
     if(!tasks) return null;
 
     return (
-        <CardTask card={card} session={session} tasks={tasks} modal={modal} modalHide={modalHide} modalShow={modalShow} fetchTasks={fetchTasks} />
+        session && <CardTask card={card} session={session} tasks={tasks} modal={modal} modalHide={modalHide} modalShow={modalShow} fetchTasks={fetchTasks} />
     )
 }
 
 const CardTask = ({...props}) => {
     return (
-        <>
+        <div className='ps-2 pe-2'>
             <div className='row mb-3'>
                 <div className='col text-end'>
                     {
@@ -74,7 +74,7 @@ const CardTask = ({...props}) => {
                     </div>
                 ))}
             </div>
-        </>
+        </div>
     )
 }
 

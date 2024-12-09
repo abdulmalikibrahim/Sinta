@@ -186,7 +186,7 @@ const Reoccuring_Percent = () => {
 const CardGroup = ({error,children}) => {
     return(
         <>
-        <div className="row">
+        <div className="row pe-2 ps-2">
             {
                 error ? <div className="col-12">{error}</div> : ""
             }

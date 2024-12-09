@@ -31,7 +31,6 @@ const LoginPage = () => {
       const result = await response.json();
 
       if (response.ok) {
-        console.log('Request is being finished.');
         navigate('/home');
         localStorage.removeItem("session");
         localStorage.setItem("session",JSON.stringify(result));
@@ -50,7 +49,6 @@ const LoginPage = () => {
 
   const handleEnter = (e) => {
     //JIKA ENTER
-    console.log(e.key)
     if(e.key === "Enter"){
       handleLogin()
     }

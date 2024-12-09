@@ -6,11 +6,11 @@ import LoginPage from './pages/LoginPage';
 import Reoccuring from './pages/Reoccuring';
 import Reoccuring_Base from './pages/Reoccuring_Base';
 import Reoccuring_Percent from './pages/Reoccuring_Percent';
+import Sidebar from './layout/Sidebar';
 
 const App = () => {
   const location = useLocation();
   const isLoginPage = location.pathname === '/login';
-  const padding = isLoginPage ? "p-0" : "p-4"; 
   const navigate = useNavigate();
   const session = localStorage.getItem("session");
 
@@ -22,8 +22,8 @@ const App = () => {
 
   return (
     <>
-      {location.pathname !== '/login' && <Navbar />}
-      <div className={padding} style={{height:'95vh', overflow:'auto'}}>
+      {location.pathname !== '/login' && <Sidebar />}
+      <div className="p-0" style={{height:'95vh', overflow:'auto'}}>
         <Routes>
           <Route path="/" element={<LoginPage />} />
           <Route path="/home" element={<Home />} />
