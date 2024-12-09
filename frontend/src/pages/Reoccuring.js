@@ -108,7 +108,7 @@ const ListJob = ({tasks,fetchTasks}) => {
                                         }
                                     </div>
                                     <div className='col-8'><span style={{fontSize:"10pt"}}><b>[{task.code}]</b> {task.job}</span></div>
-                                    <div className='col text-end d-flex justify-content-end align-items-center' style={{fontSize:"6pt"}}>{task.date_finish ? convertDate(task.date_finish) : ""}</div>
+                                    <div className='col text-end d-flex justify-content-end align-items-center mt-2' style={{fontSize:"6pt"}}>{task.date_finish ? convertDate(task.date_finish) : ""}</div>
                                 </div>
                                 <div className='row mt-2' style={{fontSize:"9pt"}}>
                                     <div className='col' style={{fontSize:"8pt"}}>{task.nama}</div>
