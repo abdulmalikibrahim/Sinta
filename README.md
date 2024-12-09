@@ -10,3 +10,5 @@ For running just access base folder using powershell or CMD. **Not in frontend o
 type npm start.
 
 <img src="https://github.com/abdulmalikibrahim/Sinta/blob/main/imagesApps/home.png?raw=true" width="100%" />
+<img src="https://github.com/abdulmalikibrahim/Sinta/blob/main/imagesApps/reoocuring.png?raw=true" width="100%" />
+<img src="https://github.com/abdulmalikibrahim/Sinta/blob/main/imagesApps/percent.png?raw=true" width="100%" />
