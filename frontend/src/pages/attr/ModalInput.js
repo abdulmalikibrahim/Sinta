@@ -3,6 +3,7 @@ import { Modal, Button, Form, InputGroup } from 'react-bootstrap';
 // import UseToken from './UseToken';
 import Swal from 'sweetalert2'
 import GroupList from '../../component/GroupList';
+import ShowRelatedPIC from './RelatedPIC';
 
 const ModalInput = ({ show, handleClose, modalData, showData }) => {
   const [method, setMethod] = useState(modalData.method);
@@ -14,6 +15,7 @@ const ModalInput = ({ show, handleClose, modalData, showData }) => {
   const [keterangan, setKeterangan] = useState(modalData.detail === undefined ? "" : modalData.detail);
   const [pic, setPIC] = useState(modalData.groupjobid);
   const session = JSON.parse(localStorage.getItem("session"));
+  const relatedPIC = localStorage.getItem("relatedPIC") || ""
 
   useEffect(() => {
     setidItem(modalData.idItem);
@@ -47,6 +49,7 @@ const ModalInput = ({ show, handleClose, modalData, showData }) => {
           detail: keterangan,
           inputer: session.data.id,
           groupjob: pic,
+          relatedPIC:relatedPIC,
         }),
       });
       const data = await response.json();
@@ -115,6 +118,7 @@ const ModalInput = ({ show, handleClose, modalData, showData }) => {
               {<GroupList selectedPIC={pic} onChange={(value) => setPIC(value)}/>}
             </Form.Group> : ""
           }
+          <ShowRelatedPIC />
           <Form.Group className="mb-3">
             <Form.Label>Keterangan (Optional)</Form.Label>
             <Form.Control as="textarea" rows={3} placeholder="Masukkan keterangan disini" value={keterangan} onChange={(e) => setKeterangan(e.target.value)}/>

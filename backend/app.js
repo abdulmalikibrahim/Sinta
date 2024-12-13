@@ -153,16 +153,22 @@ app.post('/api/getUser', async (req, res) => {
     }
 });
 
+//Filter input relatedPIC
+function filterInput(input) {
+    return input.split(',').filter(item => item.trim() !== '').join(',');
+}
+
 // Endpoint untuk menyimpan data ke database
 app.post('/api/addJob', (req, res) => {
-    const { columnId, job, date, time, type, detail, inputer, groupjob } = req.body;
+    const { columnId, job, date, time, type, detail, inputer, groupjob, relatedPIC } = req.body;
     const target = date+" "+time;
+    const related_group = filterInput(relatedPIC)
     if (!columnId || !job || !date || !time || !type || !inputer || !groupjob) {
         return res.status(400).json({ error: 'Mohon isi data dengan lengkap' });
     }
 
-    const query = 'INSERT INTO joblist (job, target, type, detail, inputer, groupjob) VALUES (?, ?, ?, ?, ?, ?)';
-    db.query(query, [job, target, type, detail, inputer, groupjob], (err, result) => {
+    const query = 'INSERT INTO joblist (job, target, type, detail, inputer, groupjob, related_group) VALUES (?, ?, ?, ?, ?, ?, ?)';
+    db.query(query, [job, target, type, detail, inputer, groupjob, related_group], (err, result) => {
         if (err) {
             console.error('Error saat menyimpan data:', err);
             return res.status(500).json({ error: 'Database error'+err });
@@ -204,14 +210,15 @@ app.post('/api/addJob', (req, res) => {
 
 // Endpoint untuk menyimpan data ke database
 app.post('/api/updateJob', (req, res) => {
-    const { idItem, columnId, job, date, time, type, detail, groupjob, inputer } = req.body;
+    const { idItem, columnId, job, date, time, type, detail, groupjob, inputer, relatedPIC } = req.body;
     const target = date+" "+time;
+    const related_group = filterInput(relatedPIC)
     if (!idItem || !columnId || !job || !date || !time || !type || !groupjob || !inputer) {
         return res.status(400).json({ error: 'Mohon isi data dengan lengkap' });
     }
 
-    const query = 'UPDATE joblist SET job=?, target=?, type=?, detail=?, groupjob=?, inputer=? WHERE id = ?';
-    db.query(query, [job, target, type, detail, groupjob, inputer, idItem], (err, result) => {
+    const query = 'UPDATE joblist SET job=?, target=?, type=?, detail=?, groupjob=?, inputer=?, related_group=? WHERE id = ?';
+    db.query(query, [job, target, type, detail, groupjob, inputer, related_group, idItem], (err, result) => {
         if (err) {
             console.error('Error saat menyimpan data:', err);
             return res.status(500).json({ error: 'Database error'+err });

@@ -5,11 +5,26 @@ import {Button} from 'react-bootstrap';
 import ModalInput from './attr/ModalInput';
 import Swal from 'sweetalert2';
 import { useNavigate } from 'react-router-dom';
+import GroupSelected from '../layout/GroupSelected'
 
 // Komponen utama Home
 function Home() {
+  const API_BASE_URL = process.env.REACT_APP_API_URL;
   const session = JSON.parse(localStorage.getItem("session"));
+  const groupSelect = JSON.parse(localStorage.getItem("groupSelect")) || []
   const navigate = useNavigate();
+  const relatedPIC = localStorage.getItem("relatedPIC") || ""
+  const [dataGroup, setdataGroup] = useState([])
+  
+  useEffect(() => {
+    const getDataGroup = async () => {
+      const result = await fetch(`${API_BASE_URL}/api/getGroupJob`);
+      const data = await result.json();
+      setdataGroup(data.data)
+    }
+
+    getDataGroup()
+  },[])
 
   useEffect(() => {
     if (!session) {
@@ -44,11 +59,11 @@ function Home() {
     waktu: Waktu,
     type: "Other",
     detail: "",
-    groupjobid: groupjob
+    groupjobid: groupjob,
+    related_group: ""
   })
   
   const showData = async (columnId) => {
-    const API_BASE_URL = process.env.REACT_APP_API_URL;
     const res = await fetch(`${API_BASE_URL}/api/ListJob`,{
       method:'POST',
       headers:{
@@ -71,10 +86,17 @@ function Home() {
   }
   
   useEffect(() => {
-    if(session){
-      const columnIds = Object.keys(columns); // Ambil semua ID kolom
-      columnIds.forEach((columnId) => showData(columnId)); // Panggil `showData` untuk setiap kolom
+    const refreshColumn = () => {
+      if(session){
+        const columnIds = Object.keys(columns); // Ambil semua ID kolom
+        columnIds.forEach((columnId) => showData(columnId)); // Panggil `showData` untuk setiap kolom
+      }
     }
+
+    setInterval(() => {
+      refreshColumn()
+    }, 1000);
+    refreshColumn()
   }, []);
 
   useEffect(() => {
@@ -111,7 +133,7 @@ function Home() {
 
     if (sourceColumn === destColumn) {
       // Ambil kolom yang sesuai dengan droppableId
-      const column = columns[source.droppableId];
+      const column = columns[ source.droppableId];
 
       // Salin item dari kolom
       const items = [...column.items];
@@ -190,7 +212,8 @@ function Home() {
       waktu: Waktu,
       type: "Other",
       detail: "",
-      groupjobid: groupjob
+      groupjobid: groupjob,
+      related_group:"",
     })
   };
 
@@ -207,6 +230,7 @@ function Home() {
       type: "Other",
       detail: "",
       groupjobid: groupjob,
+      related_group:""
     });
   };
 
@@ -365,6 +389,7 @@ function Home() {
     const dateNow = new Date(data.target);
     const Tanggal = `${dateNow.getFullYear()}-${String(dateNow.getMonth() + 1).padStart(2, "0")}-${String(dateNow.getDate()).padStart(2, "0")}`;
     const Waktu = dateNow.toLocaleTimeString("en-US",{hour:"2-digit",minute:"2-digit",hour12:false});
+    localStorage.setItem("relatedPIC",data.related_group)
     setModalData({
       method:'edit',
       idItem:data.id,
@@ -376,6 +401,7 @@ function Home() {
       type: data.type,
       detail: data.detail,
       groupjobid: data.groupjobid,
+      related_group:relatedPIC,
     });
   }
 
@@ -442,6 +468,9 @@ function Home() {
 
   return (
     <>
+      {
+        session.data.group === 7 && <GroupSelected /> 
+      }
       <DragDropContext onDragEnd={onDragEnd}>
         <div className='pb-2 pt-3 scrollRoomCard' style={{ paddingLeft: '1rem' }}>
           <div className="row" style={{ width: widthGroupCard }}>
@@ -463,65 +492,98 @@ function Home() {
                       >
                         <div className='scrollRoomCard' style={{ maxHeight: '34rem', overflow: 'hidden auto' }}>
                           {column.items.map((item, index) => {
-                            // Menyaring item berdasarkan kondisi
-                            if (session.data.group !== 7 && session.data.group !== item.groupjobid) {
-                              return null; // Tidak merender item jika tidak memenuhi kondisi
+                            const groupJobItem = item.groupjob;
+                            const relatedGroup = item.related_group ? item.related_group
+                            .split(',')
+                            .reduce((acc, data) => {
+                              const findGroup = dataGroup.find(item => item.id === parseInt(data));
+                              if (findGroup) {
+                                acc[findGroup.code] = findGroup.code; // Set the key-value pair
+                              }
+                              return acc;
+                            }, {}) : {}; // Initialize as an empty object
+                            let hidden = ""
+                            if(Object.keys(groupSelect).includes(groupJobItem)){
+                              hidden = "block"
+                            }else{
+                              // Check if any key of relatedGroup exists in groupSelect
+                              const relatedKeys = Object.keys(relatedGroup);
+                              const hasMatchingKey = relatedKeys.some(key => Object.keys(groupSelect).includes(key));
+                              if (hasMatchingKey) {
+                                hidden = "block";
+                              } else {
+                                hidden = "none";
+                              }
                             }
   
                             return (
-                              <Draggable key={item.id} draggableId={String(item.id)} index={index}>
-                                {(provided) => (
-                                  <div
-                                    ref={provided.innerRef}
-                                    {...provided.draggableProps}
-                                    {...provided.dragHandleProps}
-                                    style={{
-                                      ...provided.draggableProps.style,
-                                      padding: '10px',
-                                      marginBottom: '4px',
-                                      backgroundColor: '#49374C',
-                                      cursor: 'move',
-                                    }}
-                                  >
-                                    <div className='row'>
-                                      <div className='col-6 d-flex align-items-start'>{BadgeType(item.type)}</div>
-                                      <div className='col-6 text-end' style={{ fontSize: '7pt', color: '#adacac' }}>
-                                        Target : {formatDate(item.target)}
+                              <div style={{display:hidden}} key={"divDrag-"+item.id}>
+                                <Draggable key={item.id} draggableId={String(item.id)} index={index}>
+                                  {(provided) => (
+                                    <div
+                                      ref={provided.innerRef}
+                                      {...provided.draggableProps}
+                                      {...provided.dragHandleProps}
+                                      style={{
+                                        ...provided.draggableProps.style,
+                                        padding: '10px',
+                                        marginBottom: '4px',
+                                        backgroundColor: '#49374C',
+                                        cursor: 'move',
+                                      }}
+                                    >
+                                      <div className='row'>
+                                        <div className='col-6 d-flex align-items-start'>{BadgeType(item.type)}</div>
+                                        <div className='col-6 text-end' style={{ fontSize: '7pt', color: '#adacac' }}>
+                                          Target : {formatDate(item.target)}
+                                        </div>
                                       </div>
-                                    </div>
-                                    <div className='mb-1 mt-2'>
-                                      <b>[{item.groupjob}]</b> {item.job}
-                                    </div>
-                                    <div className='row' style={{ position: 'relative' }}>
-                                      <div className='col-6' style={{ fontSize: '8pt', color: '#adacac' }}>
-                                        {formatDate(item.created)}<br />
-                                        {item.inputer}
+                                      <div className='mb-1 mt-2'>
+                                        <b>[{item.groupjob}]</b> {item.job}
+                                        <div style={{fontSize:"8pt"}}>
+                                          {
+                                            item.related_group && 
+                                            "Related : " +
+                                            item.related_group.split(',').map(data => {
+                                              const findGroup = dataGroup.find(item => item.id === parseInt(data))
+                                              const codeGroup = findGroup.code;
+                                              return ("["+codeGroup+"]")
+                                            })
+                                            .join(' ')
+                                          }
+                                        </div>
                                       </div>
-                                      <div className='col-6'>
-                                        <div style={{ position: "absolute", bottom: '0px', right: '10px' }}>
-                                          {
-                                            column.id !== "recycle" && column.id !== "complete" && session.data.group === 7 ? (
-                                              <Button variant='success btn-sm' style={{ marginLeft: '3px' }} title='Complete Job' onClick={() => completeJob(column.id, item.id)}>
-                                                <i className="fas fa-check"></i>
-                                              </Button>
-                                            ) : ""
-                                          }
-                                          {
-                                            column.id !== "recycle" ? (
-                                              <Button variant='primary btn-sm' style={{ marginLeft: '3px' }} title='Edit Job' onClick={() => editData(column.title, column.id, item)}>
-                                                <i className="fas fa-pencil-alt"></i>
-                                              </Button>
-                                            ) : ""
-                                          }
-                                          <Button variant='danger btn-sm' style={{ marginLeft: '3px' }} title='Hapus Job' onClick={() => deleteJob(column.id, item.id)}>
-                                            <i className='fas fa-trash-alt'></i>
-                                          </Button>
+                                      <div className='row' style={{ position: 'relative' }}>
+                                        <div className='col-6' style={{ fontSize: '7pt', color: '#adacac' }}>
+                                          {formatDate(item.created)}<br />
+                                          {item.inputer}
+                                        </div>
+                                        <div className='col-6'>
+                                          <div style={{ position: "absolute", bottom: '0px', right: '10px' }}>
+                                            {
+                                              column.id !== "recycle" && column.id !== "complete" && session.data.group === 7 ? (
+                                                <Button variant='success btn-sm' style={{ marginLeft: '3px' }} title='Complete Job' onClick={() => completeJob(column.id, item.id)}>
+                                                  <i className="fas fa-check"></i>
+                                                </Button>
+                                              ) : ""
+                                            }
+                                            {
+                                              column.id !== "recycle" ? (
+                                                <Button variant='primary btn-sm' style={{ marginLeft: '3px' }} title='Edit Job' onClick={() => editData(column.title, column.id, item)}>
+                                                  <i className="fas fa-pencil-alt"></i>
+                                                </Button>
+                                              ) : ""
+                                            }
+                                            <Button variant='danger btn-sm' style={{ marginLeft: '3px' }} title='Hapus Job' onClick={() => deleteJob(column.id, item.id)}>
+                                              <i className='fas fa-trash-alt'></i>
+                                            </Button>
+                                          </div>
                                         </div>
                                       </div>
                                     </div>
-                                  </div>
-                                )}
-                              </Draggable>
+                                  )}
+                                </Draggable>
+                              </div>
                             );
                           })}
                           {provided.placeholder}

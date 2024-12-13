@@ -9,6 +9,17 @@ const LoginPage = () => {
   const [password, setPassword] = useState('');
   const [labelLogin, setLabelLogin] = useState('Login Now');
   const navigate = useNavigate();
+  const [dataGroup, setdataGroup] = useState([])
+  
+  useEffect(() => {
+    const getDataGroup = async () => {
+      const result = await fetch(`${API_BASE_URL}/api/getGroupJob`);
+      const data = await result.json();
+      setdataGroup(data.data)
+    }
+
+    getDataGroup()
+  },[])
 
   useEffect(() => {
     if(localStorage.getItem("session")){
@@ -34,6 +45,12 @@ const LoginPage = () => {
         navigate('/home');
         localStorage.removeItem("session");
         localStorage.setItem("session",JSON.stringify(result));
+        if(result.data.group === 7){
+          localStorage.setItem("groupSelect",JSON.stringify({"MD":"MD","CC":"CC","PR":"PR","PL":"PL","OR":"OR","SI":"SI","GYO":"GYO"}))
+        }else{
+          const groupName = dataGroup.find(item => item.id === parseInt(result.data.group))
+          localStorage.setItem("groupSelect",JSON.stringify({[groupName.code]:groupName.code}))
+        }
       } else {
         Swal.fire({title:"Error",html:result.data.message,icon:"warning"});
       }

@@ -27,7 +27,6 @@ const FormInput = ({tasksUpdate,modalHide, jobType, session}) => {
     const [listUser,setlistUser] = useState([])
     const [user,setUser] = useState("")
     const groupJobFirst = session.data.group ? session.data.group : "";
-    const disabledSelect = useState(session.data.group === 7 ? false : true);
     const [groupJob,setGroupJob] = useState(groupJobFirst)
     const [rDayShow, setrDayShow] = useState("")
     const [rDateShow, setrDateShow] = useState("")
@@ -225,13 +224,13 @@ const FormInput = ({tasksUpdate,modalHide, jobType, session}) => {
                 </Form.Group>
                 <Form.Group className="mb-3">
                     <Form.Label>Group</Form.Label>
-                    <Form.Select onChange={(e) => setGroupJob(e.target.value)} value={groupJob} disabled={disabledSelect} required>
+                    <Form.Select onChange={(e) => setGroupJob(e.target.value)} value={groupJob} required>
                         {listGroup}
                     </Form.Select>
                 </Form.Group>
                 <Form.Group className="mb-3">
                     <Form.Label>PIC</Form.Label>
-                    <Form.Select onChange={(e) => setUser(e.target.value)} value={user} disabled={disabledSelect} required>
+                    <Form.Select onChange={(e) => setUser(e.target.value)} value={user} required>
                         {listUser}
                     </Form.Select>
                 </Form.Group>
