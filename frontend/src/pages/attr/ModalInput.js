@@ -15,7 +15,7 @@ const ModalInput = ({ show, handleClose, modalData, showData }) => {
   const [keterangan, setKeterangan] = useState(modalData.detail === undefined ? "" : modalData.detail);
   const [pic, setPIC] = useState(modalData.groupjobid);
   const session = JSON.parse(localStorage.getItem("session"));
-  const relatedPIC = localStorage.getItem("relatedPIC") || ""
+  const [relatedPIC,setrelatedPIC] = useState(localStorage.getItem("relatedPIC"))
 
   useEffect(() => {
     setidItem(modalData.idItem);
@@ -26,6 +26,11 @@ const ModalInput = ({ show, handleClose, modalData, showData }) => {
     setType(modalData.type);
     setKeterangan(modalData.detail);
     setPIC(modalData.groupjobid);
+    if(modalData.method === "add"){
+      console.log(modalData.method)
+      localStorage.setItem("relatedPIC",[])
+      setrelatedPIC([])
+    }
   },[modalData])
 
   // Fungsi untuk menangani submit form
