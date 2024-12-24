@@ -2,11 +2,13 @@ import React, { useEffect, useState } from 'react'
 import Swal from 'sweetalert2';
 import { Link } from 'react-router-dom';
 import '../css/Home.css'
+import GroupSelected from '../layout/GroupSelected'
 
 
 const Reoccuring = () => {
     const session = JSON.parse(localStorage.getItem('session'));
     const card = ["Daily Task","Weekly Task","Bi Weekly Task","Monthly Task"];
+    const groupSelect = JSON.parse(localStorage.getItem("groupSelect")) || []
     const [tasks, setTasks] = useState();
     const [modal, setModal] = useState();
     const modalHide = () => { setModal(false) };
@@ -41,19 +43,22 @@ const Reoccuring = () => {
 
     useEffect(() => {
         fetchTasks()
-        const intervalID = setInterval(fetchTasks, 5000);
+        const intervalID = setInterval(fetchTasks, 1000);
         return () => clearInterval(intervalID)
     }, []);
     if(!tasks) return null;
 
     return (
-        session && <CardTask card={card} session={session} tasks={tasks} modal={modal} modalHide={modalHide} modalShow={modalShow} fetchTasks={fetchTasks} />
+        session && <CardTask card={card} session={session} tasks={tasks} modal={modal} modalHide={modalHide} modalShow={modalShow} fetchTasks={fetchTasks} groupSelect={groupSelect} />
     )
 }
 
 const CardTask = ({...props}) => {
     return (
         <div className='ps-2 pe-2'>
+            {
+                props.session.data.group === 7 && <GroupSelected /> 
+            }
             <div className='row mb-3'>
                 <div className='col text-end'>
                     {
@@ -68,7 +73,7 @@ const CardTask = ({...props}) => {
                         <div className='card border-0'>
                             <div className='card-header text-center bg-secondary fw-bold text-light'>{e}</div>
                             <div className='card-body ps-0 pe-0 pt-0 border-0 scrollRoomCard' style={{ minHeight: '37rem', height: '37rem', backgroundColor: '#253253' }}>
-                                <ListJob tasks={props.tasks[index]} fetchTasks={props.fetchTasks} />
+                                <ListJob tasks={props.tasks[index]} fetchTasks={props.fetchTasks} groupSelect={props.groupSelect} />
                             </div>
                         </div>
                     </div>
@@ -78,12 +83,19 @@ const CardTask = ({...props}) => {
     )
 }
 
-const ListJob = ({tasks,fetchTasks}) => {
+const ListJob = ({tasks,fetchTasks,groupSelect}) => {
     return(
         tasks.map((task, taskIndex) => {
+            const groupJobItem = task.code;
+            let hidden = ""
+            if(Object.keys(groupSelect).includes(groupJobItem)){
+                hidden = "block"
+              }else{
+                hidden = "none";
+            }
             const diffDays = diffDate(task.created, task.tipe)
             return (
-                <div className='card border-0 mb-1' key={taskIndex}>
+                <div style={{display:hidden}} className='card border-0 mb-1' key={taskIndex}>
                     <div className='card-body rounded-0 text-light pt-0 pb-0 ps-0' style={{backgroundColor:"rgb(73, 55, 76)"}}>
                         <div className='row'>
                             <div className='col-3 d-flex justify-content-start align-items-center'>
